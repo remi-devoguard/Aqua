@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mission Home Sitting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="Mission%20Home%20Sitting_files/css2_MDyG.css" rel="stylesheet">
+<style>
+:root{
+  --abyss:#07141F;
+  --glass:#0F2634;
+  --glass-2:#16323F;
+  --line:rgba(122,182,196,.18);
+  --actinic:#5AD9E0;
+  --coral:#FF7F5C;
+  --frond:#8CC96F;
+  --sand:#E9E0CB;
+  --sand-dim:#9DAAB0;
+  --alert:#FF5A4E;
+  --r:14px;
+  --pad:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--abyss);
+  color:var(--sand);
+  font-family:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.45;
+  padding-bottom:120px;
+  background-image:radial-gradient(120% 60% at 50% 0%, rgba(90,217,224,.10), transparent 60%);
+  background-attachment:fixed;
+}
+.wrap{max-width:600px;margin:0 auto;padding:0 var(--pad)}
+
+/* ---------- header ---------- */
+.top{
+  position:sticky;top:0;z-index:40;
+  background:rgba(7,20,31,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.top-inner{max-width:600px;margin:0 auto;padding:12px var(--pad) 10px}
+.brandrow{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.brand{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1;
+  color:var(--sand);
+}
+.brand span{color:var(--actinic)}
+.jour{
+  font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;
+  color:var(--actinic);background:rgba(90,217,224,.10);
+  border:1px solid rgba(90,217,224,.28);border-radius:999px;padding:3px 9px;white-space:nowrap;
+}
+.daterow{display:flex;align-items:center;gap:8px;margin-top:9px}
+.datebtn{
+  background:none;border:1px solid var(--line);color:var(--sand-dim);
+  width:30px;height:30px;border-radius:9px;font-size:15px;cursor:pointer;flex:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.datebtn:disabled{opacity:.3}
+.datelabel{
+  flex:1;text-align:center;font-size:13px;color:var(--sand-dim);
+  text-transform:capitalize;letter-spacing:.01em;
+}
+.datelabel b{color:var(--sand);font-weight:600}
+
+/* progress = waterline */
+.gauge{
+  margin-top:10px;height:26px;border-radius:8px;position:relative;overflow:hidden;
+  border:1px solid var(--line);background:rgba(255,255,255,.03);
+}
+.gauge-fill{
+  position:absolute;left:0;top:0;bottom:0;width:0%;
+  background:linear-gradient(90deg,rgba(90,217,224,.30),rgba(90,217,224,.55));
+  transition:width .45s cubic-bezier(.4,0,.2,1);
+}
+.gauge-txt{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;letter-spacing:.06em;
+}
+
+/* ---------- tank strip (signature) ---------- */
+.tanks{display:flex;gap:5px;margin-top:10px}
+.tank{
+  flex:1;height:38px;border-radius:7px;position:relative;overflow:hidden;cursor:pointer;
+  border:1px solid var(--line);background:#0A1D29;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding-bottom:3px;transition:.25s;
+}
+.tank .tk{
+  font-family:"JetBrains Mono",monospace;font-size:8.5px;font-weight:700;
+  color:var(--sand-dim);position:relative;z-index:2;letter-spacing:-.02em;
+}
+.tank::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:0%;
+  transition:height .4s ease;
+}
+.tank.on::before{height:100%}
+.tank.mer.on::before{background:linear-gradient(180deg,rgba(90,217,224,.55),rgba(90,217,224,.12))}
+.tank.douce.on::before{background:linear-gradient(180deg,rgba(140,201,111,.55),rgba(140,201,111,.12))}
+.tank.on{border-color:transparent}
+.tank.on .tk{color:#07141F}
+
+/* ---------- nav ---------- */
+.nav{display:flex;gap:6px;margin:14px 0 4px}
+.navbtn{
+  flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02);color:var(--sand-dim);
+  font-family:"Instrument Sans",sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;
+}
+.navbtn.sel{background:var(--sand);color:var(--abyss);border-color:var(--sand)}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--glass);border:1px solid var(--line);border-radius:var(--r);
+  margin-top:14px;overflow:hidden;
+}
+.card-h{
+  padding:12px 14px 10px;display:flex;align-items:center;gap:9px;
+  border-bottom:1px solid var(--line);
+}
+.card-h h2{
+  margin:0;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;
+  font-size:15px;letter-spacing:-.01em;flex:1;
+}
+.card-h .meta{
+  font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--sand-dim);
+  white-space:nowrap;
+}
+.ico{font-size:16px;line-height:1}
+
+/* ---------- task rows ---------- */
+.row{
+  display:flex;gap:11px;padding:11px 14px;align-items:flex-start;cursor:pointer;
+  border-bottom:1px solid rgba(122,182,196,.09);
+}
+.row:last-child{border-bottom:none}
+.box{
+  flex:none;width:22px;height:22px;border-radius:6px;margin-top:1px;
+  border:1.5px solid rgba(233,224,203,.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--abyss);transition:.15s;
+}
+.row.done .box{background:var(--actinic);border-color:var(--actinic)}
+.row.done .box::after{content:"✓";font-weight:700}
+.row.done .lbl{color:var(--sand-dim);text-decoration:line-through;text-decoration-color:rgba(157,170,176,.5)}
+.row.done .det{opacity:.45}
+.txt{flex:1;min-width:0}
+.lbl{font-size:14.5px;font-weight:500;line-height:1.3}
+.det{font-size:12.5px;color:var(--sand-dim);margin-top:2px;line-height:1.35}
+.dose{
+  font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;
+  padding:2px 7px;border-radius:5px;white-space:nowrap;flex:none;margin-top:1px;
+}
+.dose.mer{background:rgba(90,217,224,.13);color:var(--actinic)}
+.dose.douce{background:rgba(140,201,111,.13);color:var(--frond)}
+.dose.neutre{background:rgba(233,224,203,.08);color:var(--sand-dim)}
+
+.row.warn{background:rgba(255,127,92,.06)}
+.row.warn .lbl{color:var(--coral)}
+.row.warn .box{border-color:var(--coral)}
+.row.warn.done .box{background:var(--coral);border-color:var(--coral)}
+
+.tip{
+  padding:10px 14px;font-size:12.5px;color:var(--sand-dim);
+  background:rgba(255,255,255,.02);border-top:1px solid var(--line);
+}
+.tip b{color:var(--sand)}
+
+/* ---------- periodic ---------- */
+.per{padding:12px 14px;border-bottom:1px solid rgba(122,182,196,.09)}
+.per:last-child{border-bottom:none}
+.per-top{display:flex;align-items:center;gap:8px}
+.per-name{flex:1;font-size:14.5px;font-weight:500}
+.pill{
+  font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;
+  padding:3px 8px;border-radius:999px;white-space:nowrap;letter-spacing:.02em;
+}
+.pill.due{background:var(--coral);color:#2A0C03}
+.pill.late{background:var(--alert);color:#fff}
+.pill.ok{background:rgba(233,224,203,.08);color:var(--sand-dim)}
+.per-det{font-size:12.5px;color:var(--sand-dim);margin-top:5px;line-height:1.4}
+.per-act{
+  margin-top:9px;width:100%;padding:9px;border-radius:9px;cursor:pointer;
+  font-family:"Instrument Sans",sans-serif;font-size:13.5px;font-weight:600;
+  background:rgba(90,217,224,.12);color:var(--actinic);border:1px solid rgba(90,217,224,.3);
+}
+.per-act.done{background:rgba(255,255,255,.03);color:var(--sand-dim);border-color:var(--line)}
+
+/* ---------- chips ---------- */
+.chips{display:flex;gap:7px;padding:11px 14px 4px}
+.chip{
+  padding:6px 13px;border-radius:999px;border:1px solid var(--line);
+  background:none;color:var(--sand-dim);font-size:13px;font-weight:600;cursor:pointer;
+  font-family:"Instrument Sans",sans-serif;
+}
+.chip.sel{background:var(--frond);color:#0B1A08;border-color:var(--frond)}
+
+/* ---------- tank reference ---------- */
+.bac{padding:12px 14px;border-bottom:1px solid rgba(122,182,196,.09);display:flex;gap:11px;align-items:flex-start}
+.bac:last-child{border-bottom:none}
+.bac-dot{width:9px;height:9px;border-radius:3px;flex:none;margin-top:6px}
+.bac-dot.mer{background:var(--actinic)}
+.bac-dot.douce{background:var(--frond)}
+.bac h3{margin:0;font-size:14.5px;font-weight:600;font-family:"Instrument Sans",sans-serif}
+.bac p{margin:3px 0 0;font-size:12.5px;color:var(--sand-dim);line-height:1.4}
+
+/* ---------- alert box ---------- */
+.alert{
+  border-color:rgba(255,90,78,.35);
+  background:linear-gradient(180deg,rgba(255,90,78,.10),rgba(255,90,78,.03));
+}
+.alert .card-h{border-bottom-color:rgba(255,90,78,.25)}
+.alert .card-h h2{color:var(--coral)}
+.steps{padding:12px 14px;margin:0;list-style:none}
+.steps li{
+  font-size:14px;line-height:1.5;padding-left:22px;position:relative;margin-bottom:11px;
+}
+.steps li:last-child{margin-bottom:0}
+.steps li::before{
+  content:"→";position:absolute;left:0;color:var(--coral);font-weight:700;
+}
+.steps b{color:var(--sand)}
+
+/* ---------- pump banner ---------- */
+.pump{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  padding:12px var(--pad) calc(12px + env(safe-area-inset-bottom));
+  background:rgba(7,20,31,.96);backdrop-filter:blur(14px);
+  border-top:2px solid var(--coral);display:none;
+}
+.pump.show{display:block}
+.pump-in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.pump-t{
+  font-family:"JetBrains Mono",monospace;font-weight:700;font-size:26px;
+  color:var(--coral);letter-spacing:-.02em;flex:none;
+}
+.pump-x{flex:1;font-size:13px;line-height:1.35}
+.pump-x b{display:block;font-size:14.5px;color:var(--coral);font-family:"Bricolage Grotesque",sans-serif}
+.pump-go{
+  flex:none;padding:10px 15px;border-radius:10px;border:none;cursor:pointer;
+  background:var(--coral);color:#2A0C03;font-weight:700;font-size:13.5px;
+  font-family:"Instrument Sans",sans-serif;
+}
+.pump.ring{border-top-color:var(--alert);animation:flash 1.1s infinite}
+.pump.ring .pump-t,.pump.ring .pump-x b{color:var(--alert)}
+.pump.ring .pump-go{background:var(--alert);color:#fff}
+@keyframes flash{50%{background:rgba(60,10,8,.97)}}
+
+/* ---------- footer ---------- */
+.foot{padding:22px 2px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.foot button{
+  padding:7px 12px;border-radius:9px;border:1px solid var(--line);
+  background:none;color:var(--sand-dim);font-size:12.5px;cursor:pointer;
+  font-family:"Instrument Sans",sans-serif;
+}
+.save{
+  font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--sand-dim);
+  margin-left:auto;display:flex;align-items:center;gap:5px;
+}
+.save::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--frond)}
+.save.off::before{background:var(--coral)}
+
+.empty{padding:16px 14px;font-size:13.5px;color:var(--sand-dim);text-align:center}
+.hidden{display:none}
+.hand{
+  display:inline-block;font-size:11px;color:var(--coral);
+  border:1px dashed rgba(255,127,92,.4);border-radius:5px;padding:0 5px;margin-left:5px;
+  vertical-align:1px;font-family:"JetBrains Mono",monospace;
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-inner">
+    <div class="brandrow">
+      <div class="brand">MISSION <span>HOME SITTING</span></div>
+      <div class="jour" id="jour">J+0</div>
+    </div>
+    <div class="daterow">
+      <button class="datebtn" id="prev" aria-label="Jour précédent">‹</button>
+      <div class="datelabel" id="datelabel"><b>Aujourd'hui</b> · jeudi 27 août</div>
+      <button class="datebtn" id="next" aria-label="Jour suivant" disabled="disabled">›</button>
+    </div>
+    <div class="gauge"><div class="gauge-fill" id="gfill" style="width: 0%;"></div><div class="gauge-txt" id="gtxt">0 / 19</div></div>
+    <div class="tanks" id="tanks"><div class="tank mer" title="e200"><span class="tk">200</span></div><div class="tank mer" title="b120"><span class="tk">120</span></div><div class="tank mer" title="b57m"><span class="tk">57B</span></div><div class="tank mer" title="s57m"><span class="tk">57S</span></div><div class="tank douce" title="hublot"><span class="tk">Hub</span></div><div class="tank douce" title="s57d"><span class="tk">57S</span></div><div class="tank douce" title="g57"><span class="tk">57G</span></div><div class="tank douce on" title="crabes"><span class="tk">Cra</span></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="nav">
+    <button class="navbtn sel" data-tab="jour">Aujourd'hui</button>
+    <button class="navbtn" data-tab="bacs">Les bacs</button>
+    <button class="navbtn" data-tab="urg">Urgence</button>
+  </div>
+
+  <div id="tab-jour"><div class="card"><div class="card-h"><span class="ico">🌅</span><h2>Matin</h2><span class="meta">≈ 1 min</span></div><div class="row" data-id="m1"><div class="box"></div><div class="txt"><div class="lbl">Eau de mer — 57 L Bureau</div></div><div class="dose mer">1 pincée</div></div><div class="row" data-id="m2"><div class="box"></div><div class="txt"><div class="lbl">Eau de mer — 120 L Bureau</div></div><div class="dose mer">2 pincées</div></div><div class="row" data-id="m3"><div class="box"></div><div class="txt"><div class="lbl">Eau douce — Hublot</div><div class="det">Le combattant noir</div></div><div class="dose douce">1 pincée</div></div></div><div class="card"><div class="card-h"><span class="ico">🌙</span><h2>Après-midi / Soir</h2><span class="meta">≈ 3 min</span></div><div class="row" data-id="s1"><div class="box"></div><div class="txt"><div class="lbl">Eau de mer — 200 L Entrée</div></div><div class="dose mer">2 pincées</div></div><div class="row" data-id="s2" data-timer="1"><div class="box"></div><div class="txt"><div class="lbl">Couper les pompes du salon</div><div class="det">Interrupteur n°4 — lance le minuteur de 15 min</div></div><div class="dose neutre">15 min</div></div><div class="row" data-id="s3"><div class="box"></div><div class="txt"><div class="lbl">Eau de mer — 57 L Salon</div></div><div class="dose mer">1 pincée</div></div><div class="row" data-id="s4"><div class="box"></div><div class="txt"><div class="lbl">Eau douce — 57 L Salon</div><div class="det">Automatisé : vérifier le nourrisseur (tap-tap clapet + appui icône)</div></div><div class="dose douce">check</div></div><div class="row" data-id="s5"><div class="box"></div><div class="txt"><div class="lbl">Eau douce — 57 L Garage</div></div><div class="dose douce">1 pincée</div></div><div class="row" data-id="s6"><div class="box"></div><div class="txt"><div class="lbl">Grands bacs eau de mer</div><div class="det">200 L entrée + 120 L bureau</div></div><div class="dose mer">½ palet</div></div><div class="row warn" data-id="s7"><div class="box"></div><div class="txt"><div class="lbl">Rallumer les pompes du salon</div><div class="det">Après les 15 minutes — à ne surtout pas oublier</div></div></div><div class="tip">Ordre conseillé : couper les pompes du salon <b>en premier</b>, nourrir les autres bacs pendant les 15 minutes, finir par le 57 L salon, puis rallumer.</div></div><div class="card"><div class="card-h"><span class="ico">📅</span><h2>Tâches périodiques</h2><span class="meta">rien à faire</span></div><div class="empty">Rien de périodique aujourd'hui. Tout est à jour.</div><div class="per"><div class="per-top"><span class="ico">🦀</span><span class="per-name">Paludarium — crabes</span><span class="pill ok">dans 3 j</span></div><div class="per-det">1 pincée de granulés.</div><button class="per-act done" data-per="crabes">Fait il y a 0 j — refaire maintenant</button></div><div class="per"><div class="per-top"><span class="ico">💧</span><span class="per-name">Osmolateurs (eau de mer)</span><span class="pill ok">dans 4 j</span></div><div class="per-det">Remplir en eau osmosée. Bidons : garage / salle de bain / près des bacs. Garder la valve hors de l'eau, ça spritze !</div><button class="per-act done" data-per="osmo">Fait il y a 0 j — refaire maintenant</button></div><div class="per"><div class="per-top"><span class="ico">🧪</span><span class="per-name">kH — bouteilles en verre<span class="hand">ajout</span></span><span class="pill ok">dans 5 j</span></div><div class="per-det">Une petite bouteille en verre près de chaque bac récifal : remuer, puis verser.</div><button class="per-act done" data-per="kh">Fait il y a 0 j — refaire maintenant</button></div><div class="per"><div class="per-top"><span class="ico">🔍</span><span class="per-name">Le grand check — écumeurs</span><span class="pill ok">dans 6 j</span></div><div class="per-det">2 écumeurs au bureau + 1 à l'entrée. Celui de l'entrée : vider le godet sans bouger l'appareil.</div><button class="per-act done" data-per="grand">Fait il y a 0 j — refaire maintenant</button></div></div><div class="card"><div class="card-h"><span class="ico">🔎</span><h2>Check-up visuel</h2><span class="meta">≈ 2 min</span></div><div class="row" data-id="c1"><div class="box"></div><div class="txt"><div class="lbl">Poissons</div><div class="det">Comportement normal ?</div></div></div><div class="row" data-id="c2"><div class="box"></div><div class="txt"><div class="lbl">Pompes</div><div class="det">Aucun bruit anormal ?</div></div></div><div class="row" data-id="c3"><div class="box"></div><div class="txt"><div class="lbl">Niveau d'eau</div><div class="det">OK dans tous les bacs ?</div></div></div><div class="row" data-id="c4"><div class="box"></div><div class="txt"><div class="lbl">Température</div><div class="det">Stable ? Sinon → allumer la clim</div></div></div><div class="row" data-id="c5"><div class="box"></div><div class="txt"><div class="lbl">Nourriture</div><div class="det">Bien distribuée partout ?</div></div></div></div><div class="card"><div class="card-h"><span class="ico">🪴</span><h2>Jardin &amp; maison</h2></div><div class="chips"><button class="chip sel" data-meteo="soleil">☀️ Il a fait sec</button><button class="chip" data-meteo="pluie">🌧️ Il a plu</button></div><div class="row" data-id="j1"><div class="box"></div><div class="txt"><div class="lbl">Arrosage extérieur</div><div class="det">Tout arroser, serre comprise.</div></div></div><div class="row" data-id="j2"><div class="box"></div><div class="txt"><div class="lbl">Plantes d'intérieur<span class="hand">ajout</span></div><div class="det">Un arrosoir différent par étage</div></div></div><div class="row" data-id="j3"><div class="box"></div><div class="txt"><div class="lbl">Déshumidificateurs</div><div class="det">Buanderie + entrée : vider les réservoirs</div></div></div><div class="row" data-id="j4"><div class="box"></div><div class="txt"><div class="lbl">Aspirateurs robots</div><div class="det">Vider la poussière / le sac</div></div></div></div><div class="card"><div class="card-h"><span class="ico">🦐</span><h2>Les crevettes</h2><span class="meta">0 min</span></div><div class="empty">Rien à faire. Elles attendent son retour. 💚</div></div></div>
+
+  <div id="tab-bacs" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="ico">🐠</span><h2>Eau de mer</h2><span class="meta">4 bacs</span></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>200 L — Entrée</h3><p>Matin : rien. Soir : 2 pincées + ½ palet de fond. Écumeur au grand check. <b>Ne jamais bouger l'appareil.</b></p></div></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>120 L — Bureau</h3><p>Matin : 2 pincées. Soir : ½ palet de fond. Écumeur au grand check.</p></div></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>57 L — Bureau</h3><p>Matin : 1 pincée. Écumeur au grand check.</p></div></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>57 L — Salon</h3><p>Soir : 1 pincée, <b>pompes coupées 15 min avant</b> (interrupteur n°4).</p></div></div>
+      <div class="tip">Les 4 bacs d'eau de mer ont un <b>osmolateur</b> à remplir en eau osmosée tous les 4-5 jours. Les bacs récifaux ont chacun une <b>petite bouteille en verre (kH)</b> à côté : remuer puis verser tous les 5 jours.</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="ico">🌿</span><h2>Eau douce &amp; paludarium</h2><span class="meta">4 bacs</span></div>
+      <div class="bac"><span class="bac-dot douce"></span><div><h3>Hublot — Bureau</h3><p>Combattant noir. Matin : 1 pincée.</p></div></div>
+      <div class="bac"><span class="bac-dot douce"></span><div><h3>57 L — Salon</h3><p><b>Automatisé.</b> Soir : vérifier le nourrisseur (tap-tap sur le clapet + appui sur l'icône).</p></div></div>
+      <div class="bac"><span class="bac-dot douce"></span><div><h3>57 L — Garage</h3><p>Soir : 1 pincée.</p></div></div>
+      <div class="bac"><span class="bac-dot douce"></span><div><h3>Paludarium — Crabes</h3><p>1 pincée de granulés tous les 3-4 jours.</p></div></div>
+      <div class="tip"><b>Les crevettes</b> n'ont besoin de rien. Elles attendent son retour. 🦐</div>
+    </div>
+  </div>
+
+  <div id="tab-urg" class="hidden">
+    <div class="card alert">
+      <div class="card-h"><span class="ico">☠️</span><h2>Poisson ou invertébré mort / forte odeur</h2></div>
+      <ol class="steps">
+        <li>Il peut être <b>retiré à la main</b> puis composté.</li>
+        <li>Si c'est le cas, ou si l'odeur persiste, ajouter <b>une dose de Microbe-Lift Perfect Blend</b>.</li>
+        <li>La bouteille est dans le <b>cabinet du 200 L (entrée)</b>.</li>
+      </ol>
+    </div>
+    <div class="card alert">
+      <div class="card-h"><span class="ico">🌡️</span><h2>Température qui grimpe</h2></div>
+      <ol class="steps"><li><b>Allumer la clim.</b> C'est le seul réflexe : la température des bacs suit celle de la pièce.</li></ol>
+    </div>
+    <div class="card alert">
+      <div class="card-h"><span class="ico">💦</span><h2>Remplissage des osmolateurs</h2></div>
+      <ol class="steps">
+        <li>Bidons d'eau osmosée : <b>garage, salle de bain, près des bacs</b>.</li>
+        <li>Garder la <b>valve hors de l'eau</b> — sinon ça spritze partout.</li>
+      </ol>
+    </div>
+    <div class="card alert">
+      <div class="card-h"><span class="ico">🚫</span><h2>Écumeur de l'entrée</h2></div>
+      <ol class="steps"><li>On vide le godet, mais on <b>ne bouge pas l'appareil</b>. Réglage sensible.</li></ol>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="ico">🧭</span><h2>Rythme de la semaine</h2></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>Chaque jour</h3><p>Nourrissage matin + soir, check-up visuel, jardin &amp; maison.</p></div></div>
+      <div class="bac"><span class="bac-dot douce"></span><div><h3>Tous les 3-4 jours</h3><p>Crabes du paludarium.</p></div></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>Tous les 4-5 jours</h3><p>Osmolateurs.</p></div></div>
+      <div class="bac"><span class="bac-dot mer"></span><div><h3>Tous les 5 jours</h3><p>kH — bouteilles en verre des bacs récifaux.</p></div></div>
+      <div class="bac"><span class="bac-dot douce"></span><div><h3>Tous les 6 jours</h3><p>Le grand check : écumeurs.</p></div></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <button id="setstart">Date de départ</button>
+    <button id="reset">Tout remettre à zéro</button>
+    <span class="save" id="savest">Sauvegardé</span>
+  </div>
+</div>
+
+<div class="pump" id="pump">
+  <div class="pump-in">
+    <div class="pump-t" id="pumpt">15:00</div>
+    <div class="pump-x"><b id="pumph">Pompes du salon coupées</b><span id="pumps">Nourris le 57 L salon, puis rallume l'interrupteur n°4.</span></div>
+    <button class="pump-go" id="pumpgo">Rallumé</button>
+  </div>
+</div>
+
+<script>
+/* ============ DONNÉES ============ */
+const MATIN = [
+  {id:'m1', lbl:"Eau de mer — 57 L Bureau", dose:"1 pincée", type:"mer", tank:"b57m"},
+  {id:'m2', lbl:"Eau de mer — 120 L Bureau", dose:"2 pincées", type:"mer", tank:"b120"},
+  {id:'m3', lbl:"Eau douce — Hublot", det:"Le combattant noir", dose:"1 pincée", type:"douce", tank:"hublot"}
+];
+const SOIR = [
+  {id:'s1', lbl:"Eau de mer — 200 L Entrée", dose:"2 pincées", type:"mer", tank:"e200"},
+  {id:'s2', lbl:"Couper les pompes du salon", det:"Interrupteur n°4 — lance le minuteur de 15 min", dose:"15 min", type:"neutre", timer:true},
+  {id:'s3', lbl:"Eau de mer — 57 L Salon", dose:"1 pincée", type:"mer", tank:"s57m"},
+  {id:'s4', lbl:"Eau douce — 57 L Salon", det:"Automatisé : vérifier le nourrisseur (tap-tap clapet + appui icône)", dose:"check", type:"douce", tank:"s57d"},
+  {id:'s5', lbl:"Eau douce — 57 L Garage", dose:"1 pincée", type:"douce", tank:"g57"},
+  {id:'s6', lbl:"Grands bacs eau de mer", det:"200 L entrée + 120 L bureau", dose:"½ palet", type:"mer"},
+  {id:'s7', lbl:"Rallumer les pompes du salon", det:"Après les 15 minutes — à ne surtout pas oublier", type:"neutre", warn:true}
+];
+const CHECK = [
+  {id:'c1', lbl:"Poissons", det:"Comportement normal ?"},
+  {id:'c2', lbl:"Pompes", det:"Aucun bruit anormal ?"},
+  {id:'c3', lbl:"Niveau d'eau", det:"OK dans tous les bacs ?"},
+  {id:'c4', lbl:"Température", det:"Stable ? Sinon → allumer la clim"},
+  {id:'c5', lbl:"Nourriture", det:"Bien distribuée partout ?"}
+];
+const MAISON = [
+  {id:'j2', lbl:"Plantes d'intérieur", det:"Un arrosoir différent par étage", hand:true},
+  {id:'j3', lbl:"Déshumidificateurs", det:"Buanderie + entrée : vider les réservoirs"},
+  {id:'j4', lbl:"Aspirateurs robots", det:"Vider la poussière / le sac"}
+];
+const PERIODIC = [
+  {id:'crabes', every:3, grace:4, ico:"🦀", lbl:"Paludarium — crabes",
+   det:"1 pincée de granulés.", act:"Les crabes sont nourris"},
+  {id:'osmo', every:4, grace:5, ico:"💧", lbl:"Osmolateurs (eau de mer)",
+   det:"Remplir en eau osmosée. Bidons : garage / salle de bain / près des bacs. Garder la valve hors de l'eau, ça spritze !", act:"Osmolateurs remplis"},
+  {id:'kh', every:5, grace:5, ico:"🧪", lbl:"kH — bouteilles en verre", hand:true,
+   det:"Une petite bouteille en verre près de chaque bac récifal : remuer, puis verser.", act:"kH versé"},
+  {id:'grand', every:6, grace:6, ico:"🔍", lbl:"Le grand check — écumeurs",
+   det:"2 écumeurs au bureau + 1 à l'entrée. Celui de l'entrée : vider le godet sans bouger l'appareil.", act:"Écumeurs faits"}
+];
+const TANKS = [
+  {k:'e200', n:"200", t:'mer'}, {k:'b120', n:"120", t:'mer'},
+  {k:'b57m', n:"57B", t:'mer'}, {k:'s57m', n:"57S", t:'mer'},
+  {k:'hublot', n:"Hub", t:'douce'}, {k:'s57d', n:"57S", t:'douce'},
+  {k:'g57', n:"57G", t:'douce'}, {k:'crabes', n:"Cra", t:'douce'}
+];
+
+/* ============ ÉTAT ============ */
+const KEY = 'homesitting-v1';
+let S = {start:iso(new Date()), days:{}, per:{}, meteo:'soleil', pump:null};
+let view = iso(new Date());
+let mem = false, saveT = null;
+
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function parse(s){const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function diff(a,b){return Math.round((parse(a)-parse(b))/86400000)}
+function shift(s,n){const d=parse(s);d.setDate(d.getDate()+n);return iso(d)}
+
+async function load(){
+  try{
+    const r = await window.storage.get(KEY);
+    if(r && r.value) S = Object.assign(S, JSON.parse(r.value));
+  }catch(e){ /* première utilisation ou stockage indisponible */ }
+  if(typeof window.storage === 'undefined') mem = true;
+  render();
+}
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(async ()=>{
+    const el = document.getElementById('savest');
+    try{
+      await window.storage.set(KEY, JSON.stringify(S));
+      el.className='save'; el.textContent='Sauvegardé';
+    }catch(e){
+      mem = true; el.className='save off'; el.textContent='Session seulement';
+    }
+  }, 350);
+}
+
+function day(d){ if(!S.days[d]) S.days[d]=[]; return S.days[d] }
+function has(d,id){ return day(d).indexOf(id) > -1 }
+function toggle(d,id){
+  const a = day(d), i = a.indexOf(id);
+  if(i>-1) a.splice(i,1); else a.push(id);
+  save();
+}
+
+/* périodiques : jours restants */
+function last(id){ return S.per[id] || S.start }
+function since(id){ return diff(view, last(id)) }
+function status(p){
+  const s = since(p.id);
+  if(s >= p.grace + 1) return {k:'late', txt:'EN RETARD'};
+  if(s >= p.every) return {k:'due', txt:'AUJOURD\'HUI'};
+  return {k:'ok', txt:'dans '+(p.every - s)+' j'};
+}
+
+/* ============ RENDU ============ */
+function render(){
+  const today = iso(new Date());
+  const d = parse(view);
+  document.getElementById('datelabel').innerHTML =
+    (view===today ? '<b>Aujourd\'hui</b> · ' : '') +
+    d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('next').disabled = (view === today);
+  const j = diff(view, S.start);
+  document.getElementById('jour').textContent = 'J' + (j<0 ? j : '+'+j);
+
+  renderJour();
+  renderTanks();
+  renderGauge();
+  renderPump();
+}
+
+function rowHTML(t, pre){
+  const id = (pre||'') + t.id;
+  const done = has(view, id);
+  return '<div class="row'+(done?' done':'')+(t.warn?' warn':'')+'" data-id="'+id+'"'+(t.timer?' data-timer="1"':'')+'>'+
+    '<div class="box"></div>'+
+    '<div class="txt"><div class="lbl">'+t.lbl+(t.hand?'<span class="hand">ajout</span>':'')+'</div>'+
+    (t.det?'<div class="det">'+t.det+'</div>':'')+'</div>'+
+    (t.dose?'<div class="dose '+(t.type||'neutre')+'">'+t.dose+'</div>':'')+
+  '</div>';
+}
+
+function renderJour(){
+  let h = '';
+
+  h += '<div class="card"><div class="card-h"><span class="ico">🌅</span><h2>Matin</h2><span class="meta">≈ 1 min</span></div>'
+     + MATIN.map(t=>rowHTML(t)).join('') + '</div>';
+
+  h += '<div class="card"><div class="card-h"><span class="ico">🌙</span><h2>Après-midi / Soir</h2><span class="meta">≈ 3 min</span></div>'
+     + SOIR.map(t=>rowHTML(t)).join('')
+     + '<div class="tip">Ordre conseillé : couper les pompes du salon <b>en premier</b>, nourrir les autres bacs pendant les 15 minutes, finir par le 57 L salon, puis rallumer.</div></div>';
+
+  // périodiques du jour
+  const due = PERIODIC.filter(p=>status(p).k !== 'ok');
+  const later = PERIODIC.filter(p=>status(p).k === 'ok');
+  h += '<div class="card"><div class="card-h"><span class="ico">📅</span><h2>Tâches périodiques</h2>'
+     + '<span class="meta">'+(due.length? due.length+' à faire' : 'rien à faire')+'</span></div>';
+  if(!due.length) h += '<div class="empty">Rien de périodique aujourd\'hui. Tout est à jour.</div>';
+  h += due.concat(later).map(p=>{
+    const st = status(p), isdue = st.k!=='ok';
+    return '<div class="per"><div class="per-top"><span class="ico">'+p.ico+'</span>'
+      + '<span class="per-name">'+p.lbl+(p.hand?'<span class="hand">ajout</span>':'')+'</span>'
+      + '<span class="pill '+st.k+'">'+st.txt+'</span></div>'
+      + '<div class="per-det">'+p.det+'</div>'
+      + '<button class="per-act'+(isdue?'':' done')+'" data-per="'+p.id+'">'
+      + (isdue? p.act : 'Fait il y a '+since(p.id)+' j — refaire maintenant') + '</button></div>';
+  }).join('');
+  h += '</div>';
+
+  h += '<div class="card"><div class="card-h"><span class="ico">🔎</span><h2>Check-up visuel</h2><span class="meta">≈ 2 min</span></div>'
+     + CHECK.map(t=>rowHTML(t)).join('') + '</div>';
+
+  const pluie = S.meteo === 'pluie';
+  h += '<div class="card"><div class="card-h"><span class="ico">🪴</span><h2>Jardin &amp; maison</h2></div>'
+     + '<div class="chips"><button class="chip'+(pluie?'':' sel')+'" data-meteo="soleil">☀️ Il a fait sec</button>'
+     + '<button class="chip'+(pluie?' sel':'')+'" data-meteo="pluie">🌧️ Il a plu</button></div>'
+     + rowHTML({id:'j1', lbl:"Arrosage extérieur",
+        det: pluie ? "Serre + pots sous abri + tomates uniquement. Ne pas oublier la serre."
+                   : "Tout arroser, serre comprise."})
+     + MAISON.map(t=>rowHTML(t)).join('') + '</div>';
+
+  h += '<div class="card"><div class="card-h"><span class="ico">🦐</span><h2>Les crevettes</h2><span class="meta">0 min</span></div>'
+     + '<div class="empty">Rien à faire. Elles attendent son retour. 💚</div></div>';
+
+  document.getElementById('tab-jour').innerHTML = h;
+}
+
+function todayIds(){
+  let ids = MATIN.concat(SOIR, CHECK, MAISON).map(t=>t.id);
+  ids.push('j1');
+  return ids;
+}
+function renderGauge(){
+  const ids = todayIds();
+  const dueP = PERIODIC.filter(p=>status(p).k!=='ok');
+  const total = ids.length + dueP.length;
+  const done = ids.filter(i=>has(view,i)).length + dueP.filter(p=>last(p.id)===view).length;
+  const pct = total? Math.round(done/total*100) : 0;
+  document.getElementById('gfill').style.width = pct+'%';
+  document.getElementById('gtxt').textContent = done+' / '+total + (pct===100? '  ·  TOUT EST FAIT ✓' : '');
+}
+function renderTanks(){
+  const fed = {};
+  MATIN.concat(SOIR).forEach(t=>{ if(t.tank && has(view,t.id)) fed[t.tank]=1 });
+  if(last('crabes') === view) fed['crabes'] = 1;
+  document.getElementById('tanks').innerHTML = TANKS.map(t=>
+    '<div class="tank '+t.t+(fed[t.k]?' on':'')+'" title="'+t.k+'"><span class="tk">'+t.n+'</span></div>'
+  ).join('');
+}
+
+/* ============ MINUTEUR POMPES ============ */
+function renderPump(){
+  const el = document.getElementById('pump');
+  const active = has(view,'s2') && !has(view,'s7') && view === iso(new Date());
+  if(!active){ el.className='pump'; return }
+  el.className = 'pump show';
+  tick();
+}
+function tick(){
+  const el = document.getElementById('pump');
+  if(!el.classList.contains('show')) return;
+  const end = S.pump || 0;
+  let left = Math.max(0, Math.round((end - Date.now())/1000));
+  const m = String(Math.floor(left/60)).padStart(2,'0'), s = String(left%60).padStart(2,'0');
+  document.getElementById('pumpt').textContent = m+':'+s;
+  if(left === 0){
+    el.classList.add('ring');
+    document.getElementById('pumph').textContent = "Rallume les pompes !";
+    document.getElementById('pumps').textContent = "Interrupteur n°4, salon.";
+    if(!el.dataset.beeped){ el.dataset.beeped='1'; beep() }
+  }else{
+    el.classList.remove('ring');
+    document.getElementById('pumph').textContent = "Pompes du salon coupées";
+    document.getElementById('pumps').textContent = "Nourris le 57 L salon pendant ce temps.";
+  }
+}
+setInterval(tick, 1000);
+function beep(){
+  try{
+    const c = new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{
+      const o=c.createOscillator(), g=c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.frequency.value=880; g.gain.value=.12;
+      o.start(c.currentTime+t); o.stop(c.currentTime+t+.16);
+    });
+  }catch(e){}
+}
+
+/* ============ ÉVÉNEMENTS ============ */
+document.addEventListener('click', e=>{
+  const row = e.target.closest('.row');
+  if(row){
+    const id = row.dataset.id;
+    toggle(view, id);
+    if(id==='s2'){
+      if(has(view,'s2')){ S.pump = Date.now()+15*60*1000; document.getElementById('pump').dataset.beeped=''; }
+      else S.pump = null;
+      save();
+    }
+    if(id==='s7' && has(view,'s7')) document.getElementById('pump').dataset.beeped='';
+    render(); return;
+  }
+  const per = e.target.closest('[data-per]');
+  if(per){
+    const id = per.dataset.per;
+    S.per[id] = (S.per[id] === view) ? shift(view,-99) : view;
+    save(); render(); return;
+  }
+  const chip = e.target.closest('[data-meteo]');
+  if(chip){ S.meteo = chip.dataset.meteo; save(); render(); return }
+  const nav = e.target.closest('[data-tab]');
+  if(nav){
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('sel'));
+    nav.classList.add('sel');
+    ['jour','bacs','urg'].forEach(t=>
+      document.getElementById('tab-'+t).classList.toggle('hidden', t !== nav.dataset.tab));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+});
+document.getElementById('prev').onclick = ()=>{ view = shift(view,-1); render() };
+document.getElementById('next').onclick = ()=>{ view = shift(view,1); render() };
+document.getElementById('pumpgo').onclick = ()=>{ toggle(view,'s7'); render() };
+document.getElementById('setstart').onclick = ()=>{
+  const v = prompt("Date de départ (AAAA-MM-JJ) — sert à calculer le J+ et les tâches périodiques :", S.start);
+  if(v && /^\d{4}-\d{2}-\d{2}$/.test(v)){ S.start = v; save(); render() }
+};
+document.getElementById('reset').onclick = ()=>{
+  if(confirm("Effacer toutes les cases cochées et l'historique ?")){
+    S = {start:iso(new Date()), days:{}, per:{}, meteo:'soleil', pump:null};
+    view = iso(new Date()); save(); render();
+  }
+};
+
+load();
+</script>
+
+
+</body></html>
